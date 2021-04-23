@@ -29,22 +29,41 @@ function crawlGames(author) {
 }
 
 function crawlEvents() {
-    let events = {};
+    let events = new Map();
     nodes('/node/feed/9/parent/group+event?limit=200')['node']
-        .forEach(x => { events[x.name] = x.id; });
+        //.forEach(x => { events[x.name] = x.id; });
+        .forEach(x => events.set(x.id, x.name));
     return events;
+}
+
+function renderEvent(head, es) {
+    let li = [];
+    let dnf = [];
+    li.push(`<h1>${head}</h1>`);
+    li.push('<ul id="table">');
+    for (const x in es) {
+        if (es[x] === null) {
+            dnf.push(`<li class='dnf'><b>${x}</b> did not finish</li>`);
+            continue;
+        }
+        li.push(`<li><b>${x}</b> made <a href='https://ldjam.com${es[x].path}'>${es[x].name}</a></li>`);
+    }
+    li = li.concat(dnf);
+    li.push('</ul>');
+    return li.join('\n');
 }
 
 function main() {
     const events = crawlEvents();
-    const keys = Object.keys(events).sort((a, b) => a < b ? 1 : b < a ? -1 : 0);
-    //for (let k of keys) {
-        //console.log(`${k}: ${events[k]}`);
-    //}
+    const keys = Array.from(events.keys()).sort((a, b) => b - a);
+
+    console.log('loading list...');
 
     const list_file = std.open('./lists/pixel-prophecy.txt', 'r');
-    const list = list_file.readAsString().split('\n');
+    const list = list_file.readAsString().split('\n').filter(x => x.length > 0);
     list_file.close();
+
+    console.log('preparing map...');
 
     let games = new Map();
     for (const k of keys) {
@@ -54,10 +73,18 @@ function main() {
             curr[auth] = null;
         }
     }
-    logMap(games);
 
-    //const games = crawlGames('philstrahl');
-    //logMap(games);
+    console.log('filling map with games...');
+
+    for (const author of list) {
+        const entries = crawlGames(author);
+        for (const [k, v] of entries) {
+            games.get(k)[author] = v;
+        }
+    }
+
+    const id = 32802;
+    console.log(renderEvent(events.get(id), games.get(id)));
 }
 
 main();
