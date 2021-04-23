@@ -1,0 +1,2 @@
+all:
+	qjs main.js
