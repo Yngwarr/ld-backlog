@@ -1,2 +1,2 @@
 all:
-	qjs main.js
+	qjs main.js lists/*.txt
