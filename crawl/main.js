@@ -1,6 +1,6 @@
 import * as std from "std";
 import { mkdir } from "os";
-import { fetch } from "minnet.so";
+import { fetch } from "./minnet.so";
 
 const ROOT = '..'
 
