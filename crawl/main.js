@@ -68,7 +68,7 @@ function renderEvent(head, es) {
     li.push('<ul id="table">');
     for (const x in es) {
         if (es[x] === null) {
-            dnf.push(`<li class='dnf'><b>${x}</b> did not finish</li>`);
+            dnf.push(`<li class='dnf'><b>${x}</b> did not finish (yet)</li>`);
             continue;
         }
         li.push(`<li><b>${x}</b> made <a href='https://ldjam.com${es[x].path}'>${es[x].name}</a></li>`);
